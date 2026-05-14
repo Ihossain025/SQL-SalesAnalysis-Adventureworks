@@ -120,31 +120,33 @@ GROUP BY
 
 -- Age group distribution using CTE
 
+-- Improved Age Group Distribution with Demographic Labels
 WITH CustomerAges AS (
     SELECT
         CustomerKey,
-        DATEDIFF(YEAR, BirthDate, GETDATE()) AS Age
+        DATEDIFF(YEAR, BirthDate, (SELECT MAX(OrderDate) FROM FactInternetSales)) AS Age
     FROM DimCustomer
 )
 SELECT
     CASE
-        WHEN Age < 18 THEN 'Under 18'
-        WHEN Age BETWEEN 18 AND 30 THEN '18-30'
-        WHEN Age BETWEEN 31 AND 45 THEN '31-45'
-        WHEN Age BETWEEN 46 AND 60 THEN '46-60'
-        ELSE '60+'
-    END AS Age_Group,
-    COUNT(*) AS Customer_Count
-
+        WHEN Age < 25 THEN 'Gen Z / Young Adult'
+        WHEN Age BETWEEN 25 AND 40 THEN 'Millennials'
+        WHEN Age BETWEEN 41 AND 55 THEN 'Gen X'
+        WHEN Age BETWEEN 56 AND 70 THEN 'Boomers'
+        ELSE 'Seniors'
+    END AS Demographic_Segment,
+    COUNT(*) AS Customer_Count,
+    CAST(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER() AS DECIMAL(5,2)) AS Percentage_Share
 FROM CustomerAges
-GROUP BY
+GROUP BY 
     CASE
-        WHEN Age < 18 THEN 'Under 18'
-        WHEN Age BETWEEN 18 AND 30 THEN '18-30'
-        WHEN Age BETWEEN 31 AND 45 THEN '31-45'
-        WHEN Age BETWEEN 46 AND 60 THEN '46-60'
-        ELSE '60+'
-    END;
+        WHEN Age < 25 THEN 'Gen Z / Young Adult'
+        WHEN Age BETWEEN 25 AND 40 THEN 'Millennials'
+        WHEN Age BETWEEN 41 AND 55 THEN 'Gen X'
+        WHEN Age BETWEEN 56 AND 70 THEN 'Boomers'
+        ELSE 'Seniors'
+    END
+ORDER BY Customer_Count DESC;
 
 -- Education levels
 
