@@ -104,6 +104,14 @@ Here are the identified relevant tables:
 - SQLquery.sql
 - Summary_Findings.pdf
 - Management_Summary.ppt/pdf
+
+---
+
+## 👤 Author
+
+**Md. Iqbal Hossain**
+
+Business & Data Analyst | Data Engineer | BI Analyst | Technical Consultant
  
 
 
